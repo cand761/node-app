@@ -4,23 +4,24 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import route from "./route/employeeRoute.js";
 
+dotenv.config();
+
 const app = express();
 app.use(bodyParser.json());
 
-dotenv.config();
-
 const PORT = process.env.PORT || 5000;
-const MONGOURL = process.env.MONGO_URL;
+const MONGOURI = process.env.MONGO_URL;
 
 mongoose
-  .connect(MONGOURL)
+  .connect(MONGOURI)
   .then(() => {
     console.log("Database Connected Successfully");
+
+    // ✅ Make sure this line is BEFORE app.listen
+    app.use("/api/employees", route);
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
-  .catch((error) => console.log(error))
-
-  app.use("/api/employees", route)
+  .catch((error) => console.log(error));
